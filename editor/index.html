@@ -51,6 +51,7 @@
 
     .CodeMirror {
       height: 100% !important;
+      font-size: 13px;
     }
     .CodeMirror-scroll {
       overflow-x: auto;
@@ -157,7 +158,7 @@ The code below show some examples of what you can do with Moonchild:
 - You can link to symbols like `addOne`
 - Are you not _impressed_?!?
 */
-var answer = 42; // To life, the universe, and everything.
+var answer42 = 42; // To life, the universe, and everything.
 
 var HIGHLIGHT_COLOR = '#beef00';
 
@@ -182,6 +183,7 @@ var template = '<h1>{{ greeting }}, {{ name }}!</h1><p>{{ message }}</p>';
     <div id="markdown">Markdown</div>
     <div id="linkify">Linkify</div>
     <div id="collectTests">Tests</div>
+    <div id="var">Variables</div>
   </div>
   <script src="deps/codemirror-3.22/lib/codemirror.js"></script>
   <link rel="stylesheet" href="deps/codemirror-3.22/lib/codemirror.css">
@@ -201,6 +203,7 @@ var template = '<h1>{{ greeting }}, {{ name }}!</h1><p>{{ message }}</p>';
   <script src="plugins/collectTests.js"></script>
   <script src="plugins/color-widget.js"></script>
   <script src="plugins/templates.js"></script>
+  <link rel="import" href="plugins/var.html">
   <link rel="import" href="plugins/js-declarations.html">
   <link rel="import" href="plugins/markdown-comments.html">
   <link rel="import" href="plugins/markdown-linkify.html">

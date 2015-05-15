@@ -1,0 +1,70 @@
+<style>
+	.varStatement {
+		color: #8CA5CE;
+		font-size: 1.5em;
+		font-weight: bold;
+	}
+
+	sub {
+		line-height: 26px;
+	}
+</style>
+
+<script>
+	var VarStatement = Moonchild.Widget.extend({
+		create: function (node) {
+			var el = createElement('span');
+			el.classList.add('varStatement');
+
+			return el;
+		},
+		render: function (el, node) {
+			el.textContent = "§";
+		}
+	});
+
+	var Identifier = Moonchild.Widget.extend({
+		create: function (node) {
+			var el = createElement('span');
+
+			return el;
+		},
+		render: function (el, node, data) {
+			var numberLocation = node.value.search(/[0-9]/);
+			var subpart = createElement('sub');
+
+			el.classList.add('identifier');
+			subpart.classList.add('sub');
+
+			el.appendChild(subpart);
+
+			if (numberLocation !== -1) {
+				var stringPart = node.value.substring(0, numberLocation);
+				var numberPart = node.value.substring(numberLocation, node.value.length);
+
+				console.log("string", stringPart, "number", numberPart);
+
+				el.innerHTML = stringPart + "<sub>" + numberPart + "</sub>";
+				console.log(el.innerHTML, stringPart + "<sub>" + numberPart + "</sub>");
+				// console.dir(el);
+				// el.childNodes[0].textContent = numberPart;
+			} else {
+				el.textContent = node.value;
+			}
+		}
+	});
+
+	Moonchild.registerExtension('variable', function (moonChild) {
+		moonChild.on('parse', function (_, __, tokens) {
+			tokens.where({'type': "Keyword", "value": "var"}).each(function (node) {
+				node.loc.end.column += 1;
+				node.range[1]       += 1;
+				moonChild.addWidget(moonChild.REPLACE, node, VarStatement);
+			});
+
+			tokens.where({"type": "Identifier"}).each(function (node) {
+				moonChild.addWidget(moonChild.REPLACE, node, Identifier);
+			});
+		});
+	});
+</script>

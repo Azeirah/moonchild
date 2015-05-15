@@ -78,7 +78,8 @@ var MAGIC_CHAR = '^';
 var parseOptions = {
   comment: true,  // Preserve comments.
   loc: true,  // Nodes include line- and column-based location info.
-  range: true  // Nodes have an index-based location range (array).
+  range: true,  // Nodes have an index-based location range (array).
+  tokens: true
 };
 
 function parse(source) {
@@ -322,15 +323,15 @@ function getHookArgs(ast) {
     }
   });
 
-  return [_.chain(nodes), _.chain(ast.comments)];
+  return [_.chain(nodes), _.chain(ast.comments), _.chain(ast.tokens)];
 }
 
 function applySafely(func, args) {
-  try {
+  // try {
     return func.apply(null, args);
-  } catch (e) {
-    return console.log(e.stack || e);  // eslint-disable-line no-console
-  }
+  // } catch (e) {
+  //   return console.log(e.stack || e);  // eslint-disable-line no-console
+  // }
 }
 
 function runDisplayHooks(tree) {

@@ -46,10 +46,11 @@ function initializeExtensionToggles(cm) {
 
 function renderNode(cm, node) {
   var widgetInfo = moonchild.getWidget(node);
-  if (widgetInfo)
+  if (widgetInfo) {
     renderWidget(cm, node, widgetInfo);
-  else
+  } else {
     clearWidgets(cm, node);
+  }
 }
 
 // Editor
@@ -60,9 +61,10 @@ function Editor() {
   codeMirror.on('change', _.debounce(editorOnChange, onChangeTimeout));
 
   var render = _.partial(renderNode, codeMirror);
-  moonchild.on('render', function(ast, comments) {
+  moonchild.on('render', function(ast, comments, tokens) {
     ast.each(render);
     comments.each(render);
+    tokens.each(render);
   });
 
   codeMirror.on('cursorActivity', function(cm, e) {
