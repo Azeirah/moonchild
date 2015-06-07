@@ -100,12 +100,27 @@ module.exports = {
 // browserify live.js -o dist/live.js
 
 var createChannel = require("./lib/channel.js").createChannel;
-var channel = createChannel(8080);
+var channel       = createChannel(8080);
 
-var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
+var canvas        = document.createElement("canvas");
+var ctx           = canvas.getContext("2d");
+
+canvas.width      = window.innerWidth;
+canvas.height     = window.innerHeight;
+
+window.addEventListener("resize", function () {
+	canvas.width  = window.innerWidth;
+	canvas.height = window.innerHeight;
+});
 
 document.body.appendChild(canvas);
+
+// Live is currently just an empty canvas, in the live environment, ctx is available
+// take this code as test code for this live environment
+/*
+ctx.fillRect(0, 0, 50, 50);
+ */
+// Then play around with the number scrubber, to see the black box move.
 
 function clearStatefulStuff() {
 	// since there's no sandboxing used here, things like eventListeners need to be cleared also

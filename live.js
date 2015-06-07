@@ -2,10 +2,18 @@
 // browserify live.js -o dist/live.js
 
 var createChannel = require("./lib/channel.js").createChannel;
-var channel = createChannel(8080);
+var channel       = createChannel(8080);
 
-var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
+var canvas        = document.createElement("canvas");
+var ctx           = canvas.getContext("2d");
+
+canvas.width      = window.innerWidth;
+canvas.height     = window.innerHeight;
+
+window.addEventListener("resize", function () {
+	canvas.width  = window.innerWidth;
+	canvas.height = window.innerHeight;
+});
 
 document.body.appendChild(canvas);
 
