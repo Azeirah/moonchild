@@ -12,7 +12,7 @@ function createFileloader (channel) {
         channel.sendToAll("fileLoad", {content: data, filePath: filePath});
       }
     });
-  }
+  };
 
   channel.onConnection(function () {
     var filename = process.argv[2];

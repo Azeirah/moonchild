@@ -1,13 +1,21 @@
 var Server           = require('node-static').Server;
 var http             = require('http');
-var createChannel    = require('./server/channel.js').createChannel;
-var createFileloader = require("./server/fileloader.js").createFileloader;
 
 var port             = 8080;
 var fileServer       = new(Server)('.');
 var server           = http.createServer(handleRequest);
-var channel          = createChannel(server);
-var fileloader       = createFileloader(channel);
+
+// these are made in such a way that they can be loaded like plugins,
+// I guess this can later be abstracted over, keep the server as simple as it
+// was before
+// And use some kind of plugin loading mechanism (commonJS..?)
+var createFileloader      = require("./server/fileloader.js").createFileloader;
+var createLiveEnvironment = require("./server/live.js").createLiveEnvironment;
+var createChannel         = require('./server/channel.js').createChannel;
+
+var channel               = createChannel(server);
+createFileloader(channel);
+createLiveEnvironment(channel);
 
 function handleRequest(req, res) {
   req.addListener('end', function() {

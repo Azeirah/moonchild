@@ -1,6 +1,15 @@
 var WebSocketServer = require("ws").Server;
 var fs              = require("fs");
 
+// A channel is a really simple abstraction over websockets,
+// it's nothing more than appending a type to a JSON message sent over websocket.
+// This allows you to listen
+// channel.on("save", function (data) {...})
+// and send
+// channel.sendToAll("saved", data);
+// The server differs slightly from the client channel, because the server
+// sends her messages to all her clients, while the client channel
+// communicates only with the server. Hence client.send and server.sendToAll
 function createChannel(server) {
 	// expecting
 	// config = {
@@ -19,7 +28,6 @@ function createChannel(server) {
 		message = JSON.stringify(data);
 
 		channel.ws.clients.forEach(function(client) {
-			console.log('sending message');
 			client.send(message);
 		});
 	};

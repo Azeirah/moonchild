@@ -28,7 +28,7 @@ function createChannel(port) {
         listener(data);
       });
     } else {
-      console.log(util.formatString("The server is shouting '{type}'! But no-one is there to hear him...", {type: type}));
+      // console.log(util.formatString("The server is shouting '{type}'! But no-one is there to hear him...", {type: type}));
     }
   };
 
@@ -52,6 +52,10 @@ function createChannel(port) {
   channel.send = function (messageType, data) {
     var message;
     data.type = messageType;
+
+    if (typeof data !== "object") {
+      console.log("Expecting object, not ", typeof data, " at channel.send where messageType = ", messageType);
+    }
 
     // Doesn't handle cyclic values
     message = JSON.stringify(data);
@@ -239,17 +243,17 @@ Extension.prototype.REPLACE = 'replace';
 function addHook(id, hookState, hookName, func) {
   var hooks;
 
-  if (!id) {
+  if (id === null) {
     id = _.uniqueId('hook-');
   }
 
-  if (hookState[hookName]) {
+  if (hookState[hookName] != null) {
     hooks = hookState[hookName];
   } else {
     hooks = hookState[hookName] = {};
   }
 
-  if (!hooks[id]) {
+  if (hooks[id] == null) {
     hooks[id] = [];
   }
 
@@ -267,11 +271,11 @@ function invokeHook(hook, args) {
 function initializeExtension(ext, deps, initFn) {
   var result;
 
-  if (initFn) {
+  if (initFn != null) {
     result = initFn.apply(null, [ext].concat(deps));
   }
 
-  if (result) {
+  if (result != null) {
     if (_.isObject(result)) {
       return result;
     }
@@ -348,6 +352,8 @@ function runDisplayHooks(tree) {
 function onChange(newValue) {
   var tree;
 
+  channel.send("file", {file: newValue});
+
   try {
     tree = parse(globalHooks, newValue);
   } catch (e) {
@@ -372,7 +378,7 @@ function getChannel() {
 }
 
 function poke() {
-  // poke invoked onChange, this can be used to update Moonchild when
+  // poke invokes onChange, this can be used to update Moonchild when
   // text was set in a non-standard way
   onChange();
 }
