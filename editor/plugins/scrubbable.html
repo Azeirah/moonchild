@@ -32,6 +32,14 @@
     });
   };
 
+  function replaceInStringWithCMNode(originalText, node, replacement) {
+    var newText = originalText.split("\n");
+    var index = node.loc.start.line - 1;
+    newText[index] = newText[index].substr(0, node.loc.start.column) + replacement + newText[index].substr(node.loc.end.column, newText[index].length - 1);
+
+    return newText.join("\n");
+  }
+
   var ScrubbableWidget = Moonchild.Widget.extend({
     create: function(node) {
       var el = createElement('span');
@@ -40,6 +48,8 @@
       var origin;
       var originalValue = node.value;
 
+      var originalText = Moonchild.getEditor()._codeMirror.getValue();
+
       var self = this;
       handleDrag(el, {
         start: function(e) {
@@ -47,7 +57,15 @@
           document.body.classList.add('mc-scrubbing');
         },
         drag: function(e) {
+          // in order to play nice with the live environment, replace the original number in the original buffer
+          // (where original is when this widget was created)
+          // with the number visible on the screen while you were dragging
+          // 
+          // it's a little hacky, especially since channel.send("file", ...) really shouldn't be used here, 
+          var temporaryText = replaceInStringWithCMNode(originalText, node, el.textContent);
+
           el.textContent = originalValue + (e.clientX - origin.x);
+          Moonchild.getChannel().send("file", {file: temporaryText});
         },
         end: function(e) {
           document.body.classList.remove('mc-scrubbing');

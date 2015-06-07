@@ -83,7 +83,7 @@ var parseOptions = {
   comment: true,  // Preserve comments.
   loc: true,  // Nodes include line- and column-based location info.
   range: true,  // Nodes have an index-based location range (array).
-  tokens: true
+  // tokens: true // enabling this breaks scrubbable numbers but enables reading tokens
 };
 
 function parse(source) {
@@ -243,17 +243,17 @@ Extension.prototype.REPLACE = 'replace';
 function addHook(id, hookState, hookName, func) {
   var hooks;
 
-  if (id === null) {
+  if (!id) {
     id = _.uniqueId('hook-');
   }
 
-  if (hookState[hookName] != null) {
+  if (hookState[hookName]) {
     hooks = hookState[hookName];
   } else {
     hooks = hookState[hookName] = {};
   }
 
-  if (hooks[id] == null) {
+  if (!hooks[id]) {
     hooks[id] = [];
   }
 
@@ -271,11 +271,11 @@ function invokeHook(hook, args) {
 function initializeExtension(ext, deps, initFn) {
   var result;
 
-  if (initFn != null) {
+  if (initFn) {
     result = initFn.apply(null, [ext].concat(deps));
   }
 
-  if (result != null) {
+  if (result) {
     if (_.isObject(result)) {
       return result;
     }

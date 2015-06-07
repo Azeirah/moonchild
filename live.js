@@ -4,9 +4,21 @@
 var createChannel = require("./lib/channel.js").createChannel;
 var channel = createChannel(8080);
 
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext("2d");
+
+document.body.appendChild(canvas);
+
+// Live is currently just an empty canvas, in the live environment, ctx is available
+// take this code as test code for this live environment
+/*
+ctx.fillRect(0, 0, 50, 50);
+ */
+// Then play around with the number scrubber, to see the black box move.
+
 function clearStatefulStuff() {
 	// since there's no sandboxing used here, things like eventListeners need to be cleared also
-	document.body.innerHTML = "";
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	// if someone does this
 	/*

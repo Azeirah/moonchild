@@ -96,11 +96,37 @@ module.exports = {
 };
 
 },{}],3:[function(require,module,exports){
+// by the way, this script needs to be built
+// browserify live.js -o dist/live.js
+
 var createChannel = require("./lib/channel.js").createChannel;
 var channel = createChannel(8080);
 
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext("2d");
+
+document.body.appendChild(canvas);
+
+function clearStatefulStuff() {
+	// since there's no sandboxing used here, things like eventListeners need to be cleared also
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	// if someone does this
+	/*
+	
+	window.setInterval(function () {
+		console.log("hi");
+	}, 100);
+
+	 */
+	
+	// then that would persist across multiple evals, 
+	// so stuff like event listeners and timeouts/intervals need to be replaced with resettable alternatives
+	// I've chosen not to use iframes because they are incredibly slow.
+}
+
 channel.on("file", function execute(data) {
-	document.body.innerHTML = "";
+	clearStatefulStuff();
 	eval(data.file);
 });
 },{"./lib/channel.js":1}],4:[function(require,module,exports){
