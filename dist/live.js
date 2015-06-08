@@ -10,7 +10,8 @@ function createChannel(port) {
 
   var channel   = Object.create(null);
 
-  var url       = util.formatString("ws://localhost:{port}/editor/", {port: port});
+
+  var url       = util.getParameterByName("websocket") || util.formatString("ws://localhost:{port}/editor/", {port: port});
   var ws        = new WebSocketLib(url);
   var listeners = {};
 
@@ -111,6 +112,9 @@ canvas.height     = window.innerHeight;
 window.addEventListener("resize", function () {
 	canvas.width  = window.innerWidth;
 	canvas.height = window.innerHeight;
+	if (lastValidCode) {
+		evaluate(lastValidCode);
+	}
 });
 
 document.body.appendChild(canvas);
@@ -140,9 +144,22 @@ function clearStatefulStuff() {
 	// I've chosen not to use iframes because they are incredibly slow.
 }
 
+var lastValidCode;
+function evaluate(javascript) {
+	try {
+		eval(javascript);
+		lastValidCode = javascript;
+	} catch(e) {
+		console.log(e);
+		if (lastValidCode) {
+			eval(lastValidCode);
+		}
+	}
+}
+
 channel.on("file", function execute(data) {
 	clearStatefulStuff();
-	eval(data.file);
+	evaluate(data.file);
 });
 },{"./lib/channel.js":1}],4:[function(require,module,exports){
 

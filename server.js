@@ -26,7 +26,6 @@ function handleRequest(req, res) {
         res.end(String(err.status));
         return;
       }
-      console.log('%s - %s', req.url, res.message);
     });
   }).resume();
 }
