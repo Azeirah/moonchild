@@ -9,17 +9,16 @@ var fs              = require("fs");
 // channel.on("thisType", function (data) {
 //     console.log(data);
 // });
-function createChannel(config) {
+function createChannel(server) {
     // expecting
     // config = {
     //   server: serverobject
     // }
-    var channel = Object.create(null);
-    var listeners = {};
+    var channel             = Object.create(null);
+    var listeners           = {};
+    var connectionListeners = [];
 
-    channel.ws = new WebSocketServer({
-        server: config.server
-    });
+    channel.ws = new WebSocketServer({server: server});
 
     channel.sendToAll = function (messageType, data) {
         var message;
@@ -32,6 +31,10 @@ function createChannel(config) {
         });
     };
 
+    channel.onConnection = function (listener) {
+        connectionListeners.push(listener);
+    };
+
     channel.on = function (messageType, callback) {
         if (messageType in listeners) {
             listeners[messageType].push(callback);
@@ -42,19 +45,21 @@ function createChannel(config) {
 
     channel.ws.on('connection', function (client) {
         console.log("opened websocket");
-        config.onConnection.call(channel, client);
+        connectionListeners.forEach(function (connectionListener) {
+            connectionListener.call(channel, client);
+        });
 
         client.on('message', function (message) {
-            var data = JSON.parse(message.data);
+            var data = JSON.parse(message);
 
             var type = data.type;
 
             if (type in listeners) {
-                listeners[type].foreach(function (listener) {
+                listeners[type].forEach(function (listener) {
                     listener(data);
                 });
             } else {
-                console.log("A client is is trying to talk to you...");
+                console.log("A client is saying \"%s\", but you're not listening...", type);
             }
         });
 
