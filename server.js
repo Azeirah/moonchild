@@ -1,14 +1,18 @@
 var Server           = require('node-static').Server;
 var http             = require('http');
 var createChannel    = require('./server/channel.js').createChannel;
-var createFileLoader = require("./server/fileLoader.js").createFileLoader;
+var createFileLoader = require('./server/fileLoader.js').createFileLoader;
+var createFileSaver  = require('./server/fileSaver.js').createFileSaver;
 
 var port             = 8080;
 var fileServer       = new(Server)('.');
 var server           = http.createServer(handleRequest);
 
 var channel          = createChannel(server);
-var fileloader       = createFileLoader(channel);
+
+// these two are plugins, or modules or whatever you wish to call them.
+createFileLoader(channel);
+createFileSaver(channel);
 
 function handleRequest(req, res) {
   req.addListener('end', function() {

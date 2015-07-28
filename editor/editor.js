@@ -9,6 +9,7 @@ var options = {};
 var codeMirror;  // TODO: Get rid of this global.
 
 var fileLoader = createFileLoader(Moonchild, Moonchild.getChannel());
+var fileSaver  = createFileSaver(Moonchild, Moonchild.getChannel());
 
 // Private helpers
 // ---------------
