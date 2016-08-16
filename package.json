@@ -26,8 +26,6 @@
     "build": "browserify $npm_package_browserify_opts",
     "lint": "eslint lib test $npm_config_package_main",
     "prepublish": "npm run build && npm run test && npm run lint",
-    "serve": "http-server -o",
-    "start": "node server.js",
     "test": "tap test/*.js",
     "watch": "watchify $npm_package_browserify_opts",
     "whizzy-demo": "open examples/whizzy.html; beefy lib/whizzy.js -- -s whizzy",
