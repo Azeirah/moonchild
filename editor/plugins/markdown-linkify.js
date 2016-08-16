@@ -1,11 +1,10 @@
-<script>
-  // An extension which looks for Markdown code sections (anything inside
-  // backticks), and if it looks like an identifier (e.g. `foo`), tries to link
-  // that text to the definition.
-  Moonchild.registerExtension(
-      'markdown-linkify',
-      ['markdown', 'js-declarations'],
-      function(moonchild, markdown, jsDeclarations) {
+// An extension which looks for Markdown code sections (anything inside
+// backticks), and if it looks like an identifier (e.g. `foo`), tries to link
+// that text to the definition.
+Moonchild.registerExtension(
+  'markdown-linkify',
+  ['markdown', 'js-declarations'],
+  function(moonchild, markdown, jsDeclarations) {
     moonchild.on('parse', function(ast, comments) {
 
       // Build a map of all the declarations in the file.
@@ -54,5 +53,5 @@
         });
       });
     });
-  });
-</script>
+  }
+);
