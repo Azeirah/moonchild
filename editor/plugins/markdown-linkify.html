@@ -7,7 +7,6 @@
       ['markdown', 'js-declarations'],
       function(moonchild, markdown, jsDeclarations) {
     moonchild.on('parse', function(ast, comments) {
-      if (!options.linkify) return;
 
       // Build a map of all the declarations in the file.
       var declarations = {};

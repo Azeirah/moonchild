@@ -8,8 +8,6 @@ Moonchild.on('parse', function(ast) {
   _.invoke(lineWidgets, 'clear');
   lineWidgets = [];
 
-  if (!options.collectTests) return;
-
   // Collect all test functions found in the code.
   ast.filter(hasMetadata).each(function(node) {
     var data = node.metadata.value;

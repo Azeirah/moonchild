@@ -5,7 +5,6 @@ Moonchild.setEditor(new Editor());
 // timeout before editor rerenders plugins
 var onChangeTimeout = 250;
 
-var options = {};
 var codeMirror;  // TODO: Get rid of this global.
 
 

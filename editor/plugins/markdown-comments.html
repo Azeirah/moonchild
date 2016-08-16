@@ -138,8 +138,6 @@ Moonchild.registerExtension('markdown', function(moonchild) {
 
   // TODO: Should the widget type should dictate its positioning?
   moonchild.on('display', function(ast, comments) {
-    if (!options.markdown) return;
-
     comments.reject(isMetadata).each(function(node) {
       moonchild.addWidget(moonchild.REPLACE, node, CommentWidget);
     });

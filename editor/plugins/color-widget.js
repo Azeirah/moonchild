@@ -32,8 +32,6 @@ addStyle({
 Moonchild.on('parse', function(ast) {
   _.invoke(bookmarks, 'clear');  // Clear widgets from the last parse.
 
-  if (!options.colors) return;
-
   // Find CSS color values, and show a little color swatch beside them.
   // Clicking on the swatch reveals a color picker.
   ast.filter(hasColorLiteral).each(function(node) {
