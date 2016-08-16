@@ -1,4 +1,4 @@
-<style>
+var style = `
   .mc-markdown {
     box-sizing: border-box;
     color: #333;
@@ -43,7 +43,7 @@
     font-style: italic;
   }
   .mc-markdown-line-comment > p::before {
-    content: '\2014';
+    content: '—';
   }
   .mc-markdown textarea {
     border: 0;
@@ -53,10 +53,9 @@
     height: 100%;
     width: 100%;
   }
-</style>
-<script src="../deps/marked-ast-0.1.0.js"></script>
-<script>
-Moonchild.registerExtension('markdown', function(moonchild) {
+`;
+
+Moonchild.registerExtension('markdown', [], function(moonchild) {
   // When walking Markdown ASTs, a list of property names for each node type
   // that should not be recursively visited.
   var leafProps = {
@@ -144,5 +143,4 @@ Moonchild.registerExtension('markdown', function(moonchild) {
   });
 
   return { walker: markdownWalker };
-});
-</script>
+}, style);

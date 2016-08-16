@@ -161,7 +161,9 @@ var template = '<h1>{{ greeting }}, {{ name }}!</h1><p>{{ message }}</p>';
   <script src="plugins/color-widget.js"></script>
   <script src="plugins/templates.js"></script>
   <script src="plugins/js-declarations.js"></script>
-  <link rel="import" href="plugins/markdown-comments.html">
+  <!-- dependency for markdown-comments -->
+  <script src="deps/marked-ast-0.1.0.js"></script>
+  <script src="plugins/markdown-comments.js"></script>
   <link rel="import" href="plugins/markdown-linkify.html">
   <link rel="import" href="plugins/scrubbable.html">
 
