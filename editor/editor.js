@@ -19,31 +19,6 @@ function editorOnChange(cm, changeObj) {
   Moonchild.onChange(cm.getValue());
 }
 
-function toggle(el, value) {
-  if (value !== undefined)
-    el.classList.toggle('on', value);
-  else
-    el.classList.toggle('on');
-  options[el.id] = el.classList.contains('on');
-}
-
-function initializeExtensionToggles(cm) {
-  function onClick(e) {
-    toggle(this);
-    e.preventDefault();
-    if (this.id == 'all') {
-      for (var j = 0; j < controls.length; j++)
-        toggle(controls[j], this.classList.contains('on'));
-    }
-    Moonchild.onChange(cm.getValue());
-  }
-
-  var controls = $$('#controls > div');
-  for (var i = 0; i < controls.length; i++) {
-    controls[i].addEventListener('click', onClick);
-  }
-}
-
 function renderNode(cm, node) {
   var widgetInfo = moonchild.getWidget(node);
   if (widgetInfo)
@@ -75,8 +50,6 @@ function Editor() {
     if (widgetType && widgetType.editable)
       console.log(markEl);
   });
-
-  initializeExtensionToggles(codeMirror);
 }
 
 Editor.prototype.replaceRange = function(fromOffset, toOffset, text) {
