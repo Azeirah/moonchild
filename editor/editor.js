@@ -30,13 +30,19 @@ function renderNode(cm, node) {
 // ------
 
 function Editor() {
+  var rerenderPlugins = _.debounce(editorOnChange, onChangeTimeout);
+
   codeMirror = this._codeMirror = CodeMirror.fromTextArea($('textarea'));
-  codeMirror.on('change', _.debounce(editorOnChange, onChangeTimeout));
+  codeMirror.on('change', rerenderPlugins);
 
   var render = _.partial(renderNode, codeMirror);
   moonchild.on('render', function(ast, comments) {
     ast.each(render);
     comments.each(render);
+  });
+
+  moonchild.on('extension-loaded', function (extensionName) {
+    rerenderPlugins(codeMirror);
   });
 
   codeMirror.on('cursorActivity', function(cm, e) {

@@ -204,6 +204,8 @@ function initializeExtension(ext, deps, initFn) {
     throw new TypeError('Invalid export from extension (must be an object)');
   }
 
+  invokeHook("extension-loaded", [ext._id]);
+
   return {};
 }
 
