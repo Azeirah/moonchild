@@ -1,6 +1,7 @@
 var lineWidgets = [];
 
 Moonchild.on('parse', function(ast) {
+  var codeMirror = Moonchild.getCodeMirror();
   var tests = {};
 
   // Tell codemirror to clear all widgets, and remove all widget references.
