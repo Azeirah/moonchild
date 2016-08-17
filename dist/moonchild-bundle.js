@@ -20,14 +20,14 @@ function renderNode(cm, moonchild, node) {
 // Editor
 // ------
 
-function Editor() {
+function Editor(textarea) {
   var moonchild = Moonchild.registerExtension();
   Moonchild.setEditor(this);
 
   var that = this;
   var rerenderPlugins = _.debounce(editorOnChange, onChangeTimeout);
 
-  this._codeMirror = CodeMirror.fromTextArea($('textarea'));
+  this._codeMirror = CodeMirror.fromTextArea(textarea);
   this._codeMirror.on('change', rerenderPlugins);
 
   var render = _.partial(renderNode, this._codeMirror, moonchild);
