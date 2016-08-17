@@ -18,6 +18,7 @@ addStyle({
 });
 
 Moonchild.on('parse', function(ast) {
+  var codeMirror = Moonchild.getCodeMirror();
   var oldWidgets = widgets;
   widgets = [];
 
