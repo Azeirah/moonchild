@@ -1,4 +1,81 @@
 !function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.Moonchild=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+// global settings...
+// timeout before editor rerenders plugins
+var onChangeTimeout = 250;
+
+// Private helpers
+// ---------------
+
+function $(sel) { return document.querySelector(sel); }
+function $$(sel) { return document.querySelectorAll(sel); }
+
+function editorOnChange(cm, changeObj) {
+  Moonchild.onChange(cm.getValue());
+}
+
+function renderNode(cm, moonchild, node) {
+  var widgetInfo = moonchild.getWidget(node);
+  if (widgetInfo)
+    renderWidget(cm, node, widgetInfo);
+  else
+    clearWidgets(cm, node);
+}
+
+// Editor
+// ------
+
+function Editor() {
+  var moonchild = Moonchild.registerExtension();
+  Moonchild.setEditor(this);
+
+  var that = this;
+  var rerenderPlugins = _.debounce(editorOnChange, onChangeTimeout);
+
+  this._codeMirror = CodeMirror.fromTextArea($('textarea'));
+  this._codeMirror.on('change', rerenderPlugins);
+
+  var render = _.partial(renderNode, this._codeMirror, moonchild);
+  moonchild.on('render', function(ast, comments) {
+    ast.each(render);
+    comments.each(render);
+  });
+
+  moonchild.on('extension-loaded', function (extensionName) {
+    rerenderPlugins(that._codeMirror);
+  });
+
+  this._codeMirror.on('cursorActivity', function(cm, e) {
+    var adjacentMarks = cm.findMarksAt(cm.getCursor());
+    if (adjacentMarks.length === 0 || !adjacentMarks[0].replacedWith)
+      return;
+
+    var markEl = widgetForMark(adjacentMarks[0]);
+    var widgetType = markEl._moonchildWidgetType;
+    if (widgetType && widgetType.editable)
+      console.log(markEl);
+  });
+
+  // force a rerender of all plugins
+  editorOnChange(that._codeMirror);
+}
+
+Editor.prototype.replaceRange = function(fromOffset, toOffset, text) {
+  this._codeMirror.replaceRange(text, fromOffset, toOffset);
+};
+
+Editor.prototype.insertText = function(offset, text) {
+  this.replaceRange(offset, null, text);
+};
+
+Editor.prototype.replaceNodeText = function(node, text) {
+  this.replaceRange(esLocToCm(node.loc.start), esLocToCm(node.loc.end), text);
+};
+
+module.exports = {
+    Editor: Editor
+};
+
+},{}],2:[function(_dereq_,module,exports){
 'use strict';
 
 var _ = _dereq_('underscore'),
@@ -100,17 +177,18 @@ module.exports = {
   parse: parse
 };
 
-},{"esprima":4,"estraverse":5,"underscore":6}],2:[function(_dereq_,module,exports){
+},{"esprima":5,"estraverse":6,"underscore":7}],3:[function(_dereq_,module,exports){
 'use strict';
 
-var _ = _dereq_('underscore'),
-    parser = _dereq_('./metadata'),
-    estraverse = _dereq_('estraverse'),
-    expanders = _dereq_('../third_party/expanders');
+var _ = _dereq_('underscore');
+var parser = _dereq_('./metadata');
+var estraverse = _dereq_('estraverse');
+var expanders = _dereq_('../third_party/expanders');
+var Editor = _dereq_('./editor').Editor;
 
-var globalHooks = {},
-    globalExtensions = {},
-    globalEditor = {};
+var globalHooks = {};
+var globalExtensions = {};
+var globalEditor = {};
 
 var widgetExpander = expanders.createExpander('displayWidget');
 var exportsExpander = expanders.createExpander('extensionId');
@@ -313,13 +391,16 @@ module.exports = {
   traverse: estraverse.traverse,
   setEditor: setEditor,
   getEditor: getEditor,
-  getCodeMirror: getCodeMirror
+  getCodeMirror: getCodeMirror,
+  create: function () {
+    return new Editor();
+  }
 };
 
-},{"../third_party/expanders":7,"./metadata":1,"estraverse":5,"underscore":6}],3:[function(_dereq_,module,exports){
+},{"../third_party/expanders":8,"./editor":1,"./metadata":2,"estraverse":6,"underscore":7}],4:[function(_dereq_,module,exports){
 module.exports = _dereq_('./lib/moonchild');
 
-},{"./lib/moonchild":2}],4:[function(_dereq_,module,exports){
+},{"./lib/moonchild":3}],5:[function(_dereq_,module,exports){
 /*
   Copyright (C) 2013 Ariya Hidayat <ariya.hidayat@gmail.com>
   Copyright (C) 2013 Thaddee Tyl <thaddee.tyl@gmail.com>
@@ -4151,7 +4232,7 @@ parseStatement: true, parseSourceElement: true */
 }));
 /* vim: set sw=4 ts=4 et tw=80 : */
 
-},{}],5:[function(_dereq_,module,exports){
+},{}],6:[function(_dereq_,module,exports){
 /*
   Copyright (C) 2012-2013 Yusuke Suzuki <utatane.tea@gmail.com>
   Copyright (C) 2012 Ariya Hidayat <ariya.hidayat@gmail.com>
@@ -4842,7 +4923,7 @@ parseStatement: true, parseSourceElement: true */
 }));
 /* vim: set sw=4 ts=4 et tw=80 : */
 
-},{}],6:[function(_dereq_,module,exports){
+},{}],7:[function(_dereq_,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -6392,7 +6473,7 @@ parseStatement: true, parseSourceElement: true */
   }
 }.call(this));
 
-},{}],7:[function(_dereq_,module,exports){
+},{}],8:[function(_dereq_,module,exports){
 (function (global){
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.expanders=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /* global -Symbol, -WeakMap */
@@ -7594,6 +7675,6 @@ defineProperty(WeakMapPoly.prototype, toStringTagSymbol, d('c', 'WeakMap'));
 },{"./is-native-implemented":20,"d":22,"es5-ext/object/set-prototype-of":38,"es5-ext/object/valid-object":42,"es5-ext/object/valid-value":43,"es6-iterator/for-of":49,"es6-iterator/get":50,"es6-symbol":2}]},{},[1])(1)
 });
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}]},{},[3])
-(3)
+},{}]},{},[4])
+(4)
 });
