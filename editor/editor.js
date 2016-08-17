@@ -31,9 +31,9 @@ function Editor() {
   var rerenderPlugins = _.debounce(editorOnChange, onChangeTimeout);
 
   this._codeMirror = CodeMirror.fromTextArea($('textarea'));
-  that._codeMirror.on('change', rerenderPlugins);
+  this._codeMirror.on('change', rerenderPlugins);
 
-  var render = _.partial(renderNode, that._codeMirror);
+  var render = _.partial(renderNode, this._codeMirror);
   moonchild.on('render', function(ast, comments) {
     ast.each(render);
     comments.each(render);
@@ -43,7 +43,7 @@ function Editor() {
     rerenderPlugins(that._codeMirror);
   });
 
-  that._codeMirror.on('cursorActivity', function(cm, e) {
+  this._codeMirror.on('cursorActivity', function(cm, e) {
     var adjacentMarks = cm.findMarksAt(cm.getCursor());
     if (adjacentMarks.length === 0 || !adjacentMarks[0].replacedWith)
       return;
