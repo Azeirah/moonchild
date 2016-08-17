@@ -301,6 +301,10 @@ function getEditor() {
   return globalEditor;
 }
 
+function getCodeMirror() {
+    return globalEditor._codeMirror;
+}
+
 module.exports = {
   on: _.partial(addHook, null, globalHooks),
   onChange: onChange,  // TODO: Get rid of this.
@@ -308,7 +312,8 @@ module.exports = {
   registerExtension: registerExtension,
   traverse: estraverse.traverse,
   setEditor: setEditor,
-  getEditor: getEditor
+  getEditor: getEditor,
+  getCodeMirror: getCodeMirror
 };
 
 },{"../third_party/expanders":7,"./metadata":1,"estraverse":5,"underscore":6}],3:[function(_dereq_,module,exports){
