@@ -53,6 +53,9 @@ function Editor() {
     if (widgetType && widgetType.editable)
       console.log(markEl);
   });
+
+  // force a rerender of all plugins
+  editorOnChange(that._codeMirror);
 }
 
 Editor.prototype.replaceRange = function(fromOffset, toOffset, text) {
