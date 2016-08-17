@@ -30,6 +30,7 @@ addStyle({
 });
 
 Moonchild.on('parse', function(ast) {
+  var codeMirror = Moonchild.getCodeMirror();
   _.invoke(bookmarks, 'clear');  // Clear widgets from the last parse.
 
   // Find CSS color values, and show a little color swatch beside them.
