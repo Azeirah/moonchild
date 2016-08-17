@@ -5,10 +5,6 @@ var onChangeTimeout = 250;
 
 // Private helpers
 // ---------------
-
-function $(sel) { return document.querySelector(sel); }
-function $$(sel) { return document.querySelectorAll(sel); }
-
 function editorOnChange(cm, changeObj) {
   Moonchild.onChange(cm.getValue());
 }
@@ -392,8 +388,8 @@ module.exports = {
   setEditor: setEditor,
   getEditor: getEditor,
   getCodeMirror: getCodeMirror,
-  create: function () {
-    return new Editor();
+  create: function (textarea) {
+    return new Editor(textarea);
   }
 };
 
