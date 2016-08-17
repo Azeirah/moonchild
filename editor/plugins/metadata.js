@@ -13,6 +13,7 @@ Moonchild.registerExtension('metadata', function(moonchild) {
   // the text of each comment with its associated AST node.
   moonchild.on('parse', function(ast) {
     _.invoke(markers, 'clear');
+    var codeMirror = Moonchild.getCodeMirror();
 
     ast.filter(hasMetadata).each(function(node) {
       // Use a unique ID to associate a node and its metadata.
