@@ -5,9 +5,6 @@ Moonchild.setEditor(new Editor());
 // timeout before editor rerenders plugins
 var onChangeTimeout = 250;
 
-var codeMirror;  // TODO: Get rid of this global.
-
-
 // Private helpers
 // ---------------
 
@@ -30,22 +27,23 @@ function renderNode(cm, node) {
 // ------
 
 function Editor() {
+  var that = this;
   var rerenderPlugins = _.debounce(editorOnChange, onChangeTimeout);
 
-  codeMirror = this._codeMirror = CodeMirror.fromTextArea($('textarea'));
-  codeMirror.on('change', rerenderPlugins);
+  this._codeMirror = CodeMirror.fromTextArea($('textarea'));
+  that._codeMirror.on('change', rerenderPlugins);
 
-  var render = _.partial(renderNode, codeMirror);
+  var render = _.partial(renderNode, that._codeMirror);
   moonchild.on('render', function(ast, comments) {
     ast.each(render);
     comments.each(render);
   });
 
   moonchild.on('extension-loaded', function (extensionName) {
-    rerenderPlugins(codeMirror);
+    rerenderPlugins(that._codeMirror);
   });
 
-  codeMirror.on('cursorActivity', function(cm, e) {
+  that._codeMirror.on('cursorActivity', function(cm, e) {
     var adjacentMarks = cm.findMarksAt(cm.getCursor());
     if (adjacentMarks.length === 0 || !adjacentMarks[0].replacedWith)
       return;
